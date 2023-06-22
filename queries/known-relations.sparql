@@ -1,0 +1,27 @@
+PREFIX madsrdf: <http://www.loc.gov/mads/rdf/v1#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX  rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+
+SELECT DISTINCT ?uri ?relation ?related ?label ?alabel ?collection
+WHERE {
+    $resource_uri ?relation ?o .
+    ?o $label_prop ?label .
+    # $resource_uri madsrdf:isMemberOfMADSScheme ?scheme .
+    $resource_uri madsrdf:isMemberOfMADSCollection ?collection .
+
+    ?related madsrdf:authoritativeLabel ?label .
+    FILTER(?o != ?related) .
+    ?related madsrdf:authoritativeLabel ?alabel . 
+    # ?related madsrdf:isMemberOfMADSScheme ?scheme .
+    ?related madsrdf:isMemberOfMADSCollection ?collection .
+    FILTER(isURI(?related)) .
+    
+    # kefo - commented out 20200427 - Will handle in xquery
+    # kefo - reactivated out 20211026
+    FILTER(
+        ?collection != <http://id.loc.gov/authorities/names/collection_LCNAF> && 
+        ?collection != <http://id.loc.gov/authorities/subjects/collection_LCSH_General>
+    ) .
+    BIND($resource_uri as ?uri) .
+}
+

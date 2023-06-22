@@ -1,0 +1,59 @@
+#!/usr/bin/env bash
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+source $DIR/config
+
+if [[ "$QUERY" != "queries/.sparql" ]];
+then
+    # If QUERY does not equal nothing, then it is something.
+    DATASET=$1
+    if [[ "$DATASET" == "subjects" || "$DATASET" == "childrensSubjects" ]];
+    then
+        SAVEFILE="data/$DATASET.rdf"
+        DBDIR="/authorities/$DATASET/"
+
+        echo $QUERY
+        echo "Fetching $DATASET"
+        echo $SAVEFILE
+        echo $DBDIR
+        curl -s $AUTHMETHOD --user "$MLUSER:$MLPASS" -X POST \
+        --data-binary @queries/get_all_triples.sparql \
+        -H "Content-type: application/sparql-query" \
+        -H "Accept: application/rdf+xml" \
+        -o $SAVEFILE \
+        "http://$SOURCEDATA_HOST:$MLPORT/v1/graphs/sparql?database=$SOURCEDATA_DB&directory=$DBDIR"
+    fi
+else
+
+    cd $DIR/data
+
+    FILE="subjects.rdf"
+    if ! [ -f "$FILE" ];
+    then
+        echo "Fetching and unpacking Subjects."
+        curl -OL https://lds-downloads.s3.amazonaws.com/tmp/202306_subjects_raw.tar.gz
+        tar -xzf 202306_subjects_raw.tar.gz
+    fi
+    
+    FILE="childrensSubjects.rdf"
+    if ! [ -f "$FILE" ];
+    then
+        echo "Fetching and unpacking Children's Subjects."
+        curl -OL https://lds-downloads.s3.amazonaws.com/tmp/202306_childrensSubjects_raw.tar.gz
+        tar -xzf 202306_childrensSubjects_raw.tar.gz
+    fi
+    
+    FILE="external_links.nt"
+    if ! [ -f "$FILE" ];
+    then
+        echo "Fetching external relationships."
+        curl -OL https://lds-downloads.s3.amazonaws.com/externallinks.nt.zip
+        unzip externallinks.nt.zip
+    fi
+
+    cd $DIR
+
+fi
+exit 1
+

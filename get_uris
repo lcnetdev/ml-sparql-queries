@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+source $DIR/config
+
+curl -s $AUTHMETHOD --user "$MLUSER:$MLPASS" -X POST \
+    --data-binary @queries/get_uris.sparql \
+    -H "Content-type: application/sparql-query" \
+    -H "Accept: text/csv" \
+    -o "data/uris.csv" \
+    "http://$MLHOST:8000/v1/graphs/sparql?database=$DB"
+
+echo "Fetched list of URIs"

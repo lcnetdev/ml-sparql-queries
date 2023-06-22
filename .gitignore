@@ -1,0 +1,8 @@
+*.rdf
+*.nt
+*.gz
+*.zip
+*.csv
+
+config
+

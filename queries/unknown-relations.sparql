@@ -1,0 +1,108 @@
+PREFIX madsrdf: <http://www.loc.gov/mads/rdf/v1#>
+PREFIX lcc: <http://id.loc.gov/ontologies/lcc#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX  rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+
+SELECT DISTINCT ?uri ?inverseRelation ?s ?label
+WHERE {
+    $resource_uri madsrdf:isMemberOfMADSScheme ?scheme .
+    $resource_uri madsrdf:isMemberOfMADSCollection ?collection .
+
+    # ?o should be a blank node; ?s is the related resource;
+    ?o madsrdf:authoritativeLabel $resource_label .
+    FILTER(isBlank(?o)) .
+    ?s ?relation ?o .
+    ?s madsrdf:authoritativeLabel ?label .
+    ?s madsrdf:isMemberOfMADSScheme ?scheme .
+    ?s madsrdf:isMemberOfMADSCollection ?collection .
+    
+    FILTER(isURI(?s)) .
+    FILTER(
+        ?collection != <http://id.loc.gov/authorities/names/collection_LCNAF> && 
+        ?collection != <http://id.loc.gov/authorities/subjects/collection_LCSH_General> && 
+        ?collection != <http://id.loc.gov/authorities/subjects/collection_SubdivideGeographically>
+    ) .
+    
+    # kefo - 20200423 commented out the below and replaced it with filter.
+    #   ML 9 was still performing rather poorly.  By matter of deduction, making this change
+    #   reduced the overall time to run this query against ~384 resources by half.  From 30 seconds to 15.
+    #   "totalRunTimeInMillis": 15877,
+    #
+    #  nate removed the filter for relations below, after adding the values statement that mirrors the BIND statement
+    # VALUES ?relation {  
+    #                madsrdf:hasReciprocalAuthority madsrdf:hasBroaderAuthority 
+    #                madsrdf:hasNarrowerAuthority madsrdf:hasLaterEstablishedForm
+    #                madsrdf:hasEarlierEstablishedForm madsrdf:useFor 
+    #                madsrdf:useInstead madsrdf:see 
+    #                madsrdf:hasExactExternalAuthority madsrdf:hasCloseExternalAuthority
+    #                madsrdf:hasBroaderExternalAuthority madsrdf:hasNarrowerExternalAuthority 
+    #                madsrdf:hasReciprocalExternalAuthority lcc:isTableFor lcc:isGuideTableFor
+    #                } .
+                    
+    #FILTER( 
+    #    ?relation = madsrdf:hasReciprocalAuthority ||
+    #    ?relation = madsrdf:hasBroaderAuthority ||
+    #    ?relation = madsrdf:hasNarrowerAuthority ||
+    #    ?relation = madsrdf:hasLaterEstablishedForm ||
+    #    ?relation = madsrdf:hasEarlierEstablishedForm ||
+    #    ?relation = madsrdf:useFor ||
+    #    ?relation = madsrdf:useInstead ||
+    #    ?relation = madsrdf:see ||
+    #    ?relation = madsrdf:hasExactExternalAuthority ||
+    #    ?relation = madsrdf:hasCloseExternalAuthority ||
+    #    ?relation = madsrdf:hasBroaderExternalAuthority ||
+    #    ?relation = madsrdf:hasNarrowerExternalAuthority ||
+    #    ?relation = madsrdf:hasReciprocalExternalAuthority ||
+    #    ?relation = madsrdf:isTableFor ||
+    #    ?relation = madsrdf:isGuideTableFor
+    #)
+    
+			BIND( 
+    IF(?relation = madsrdf:hasBroaderAuthority,
+    madsrdf:hasNarrowerAuthority,
+        IF(?relation = madsrdf:hasNarrowerAuthority,
+        madsrdf:hasBroaderAuthority,
+            IF(?relation = madsrdf:hasReciprocalAuthority,
+            madsrdf:hasReciprocalAuthority,
+                IF(?relation = madsrdf:hasLaterEstablishedForm,
+                madsrdf:hasEarlierEstablishedForm,
+                    IF(?relation = madsrdf:hasEarlierEstablishedForm,
+                    madsrdf:hasLaterEstablishedForm,
+                        IF(?relation = madsrdf:useFor,
+                        madsrdf:useInstead,
+                            IF(?relation = madsrdf:useInstead,
+                            madsrdf:useFor,
+                                IF(?relation = madsrdf:see,
+                                madsrdf:see,
+                                    IF(?relation = madsrdf:hasExactExternalAuthority,
+                                    madsrdf:hasExactExternalAuthority,
+                                        IF(?relation = madsrdf:hasCloseExternalAuthority,
+                                        madsrdf:hasCloseExternalAuthority,
+                                            IF(?relation = madsrdf:hasBroaderExternalAuthority,
+                                            madsrdf:hasNarrowerExternalAuthority,
+                                                IF(?relation = madsrdf:hasNarrowerExternalAuthority,
+                                                madsrdf:hasBroaderExternalAuthority,
+                                                    IF(?relation = madsrdf:hasReciprocalExternalAuthority,
+                                                    madsrdf:hasReciprocalExternalAuthority,
+                                                        IF(?relation = lcc:isTableFor,
+                                                        lcc:isGuideTableFor,
+                                                        "")
+                                                    )
+                                                )
+                                            )
+                                        )
+                                    )
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+        )
+    ) as ?inverseRelation ) .
+    
+FILTER( STR(?inverseRelation) != "" ) .
+
+BIND($resource_uri as ?uri) . 
+
+}

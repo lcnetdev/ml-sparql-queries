@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+source $DIR/config
+
+echo "Loading Subjects."
+curl -s -X POST --data-binary '@data/subjects.rdf' \
+    -H "Content-type: application/rdf+xml" \
+    $AUTHMETHOD --user "$MLUSER:$MLPASS" \
+    "http://$MLHOST:$MLPORT/v1/graphs?graph=$GRAPHURI&database=$DB"
+echo "Finished loading Subjects."
+
+echo "Loading Childrens Subjects."
+curl -s -X POST --data-binary '@data/childrensSubjects.rdf' \
+    -H "Content-type: application/rdf+xml" \
+    $AUTHMETHOD --user "$MLUSER:$MLPASS" \
+    "http://$MLHOST:$MLPORT/v1/graphs?graph=$GRAPHURI&database=$DB"
+echo "Finished loading Children's Subjects."
+
+echo "Loading external relationships."
+curl -s -X POST --data-binary '@data/external_links.nt' \
+    -H "Content-type: application/n-triples" \
+    $AUTHMETHOD --user "$MLUSER:$MLPASS" \
+    "http://$MLHOST:$MLPORT/v1/graphs?graph=$GRAPHURI&database=$DB"
+echo "Finished loading external relationships."
+
+echo
+echo "All data loaded."
+echo

@@ -1,0 +1,10 @@
+PREFIX madsrdf: <http://www.loc.gov/mads/rdf/v1#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+            
+SELECT DISTINCT ?uri ?relation ?related ?alabel
+WHERE {
+    $resource_uri ?relation ?related .
+    FILTER( isURI(?related) ) .
+    ?related madsrdf:authoritativeLabel ?alabel .                    
+    BIND($resource_uri as ?uri) .
+}

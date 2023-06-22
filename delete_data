@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+source $DIR/config
+
+echo
+echo "Deleting graph: $GRAPHURI"
+curl -X DELETE $AUTHMETHOD --user "$MLUSER:$MLPASS" \
+    "http://$MLHOST:$MLPORT/v1/graphs?graph=$GRAPHURI"
+echo "Finished deleting graph: $GRAPHURI"
+echo

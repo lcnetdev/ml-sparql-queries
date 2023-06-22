@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+SOURCEDATA_HOST=localhost
+SOURCEDATA_DB=source-db
+
+MLUSER=
+MLPASS=
+MLHOST=localhost
+MLPORT=8000
+GRAPHURI=info:lc/ml-sparql-test
+DB=Documents
+AUTHMETHOD=--digest
+
+REQUESTS=500
+
+QUERY=queries/$1.sparql
+
+############
+############

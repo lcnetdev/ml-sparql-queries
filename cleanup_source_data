@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+echo
+echo "Cleaning up downloaded source data."
+cd $DIR/data
+rm *ubjects*
+rm exter*
+echo "Finished cleaning up downloaded source data."
+echo
+
+cd $DIR
+
