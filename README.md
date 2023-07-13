@@ -3,7 +3,7 @@
 *** NOT UPDATED.  WIP ****
 
 ~~~bash
-git clone https://github.com/kefo/ml-sparql-issue.git
+git clone https://github.com/lcnetdev/ml-sparql-queries.git
 cd ml-perf-issue
 ./get_source_data
 ~~~
