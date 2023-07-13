@@ -11,7 +11,8 @@ GRAPHURI=info:lc/ml-sparql-test
 DB=Documents
 AUTHMETHOD=--digest
 
-REQUESTS=500
+OFFSET=6000
+REQUESTS=2000
 
 QUERY=queries/$1.sparql
 
