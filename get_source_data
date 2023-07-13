@@ -8,7 +8,7 @@ if [[ "$QUERY" != "queries/.sparql" ]];
 then
     # If QUERY does not equal nothing, then it is something.
     DATASET=$1
-    if [[ "$DATASET" == "subjects" || "$DATASET" == "childrensSubjects" ]];
+    if [[ "$DATASET" == "subjects" || "$DATASET" == "childrensSubjects" || "$DATASET" == "names" ]];
     then
         SAVEFILE="data/$DATASET.rdf"
         DBDIR="/authorities/$DATASET/"
@@ -43,6 +43,14 @@ else
         curl -OL https://lds-downloads.s3.amazonaws.com/tmp/202306_childrensSubjects_raw.tar.gz
         tar -xzf 202306_childrensSubjects_raw.tar.gz
     fi
+    
+    #FILE="names.rdf"
+    #if ! [ -f "$FILE" ];
+    #then
+    #    echo "Fetching and unpacking Names."
+    #    curl -OL https://lds-downloads.s3.amazonaws.com/tmp/202306_names_raw.tar.gz
+    #    tar -xzf 202306_names_raw.tar.gz
+    #fi
     
     FILE="external_links.nt"
     if ! [ -f "$FILE" ];
