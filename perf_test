@@ -11,82 +11,80 @@ then
 fi
 echo
 
-REQUESTS=$(($REQUESTS - 1))
-COUNT=0
+#if (( $OFFSET > 0 )); then
+#    REQUESTS=$(($REQUESTS + $OFFSET - 1))
+#else
+#    REQUESTS=$(($REQUESTS - 1))
+#fi
+# COUNT=0
 
-function url_encode() {
-    echo "$1" \
-    | sed \
-        -e 's/%/%25/g' \
-        -e 's/ /%20/g' \
-        -e 's/!/%21/g' \
-        -e 's/"/%22/g' \
-        -e "s/'/%27/g" \
-        -e 's/#/%23/g' \
-        -e 's/(/%28/g' \
-        -e 's/)/%29/g' \
-        -e 's/+/%2b/g' \
-        -e 's/,/%2c/g' \
-        -e 's/-/%2d/g' \
-        -e 's/:/%3a/g' \
-        -e 's/;/%3b/g' \
-        -e 's/?/%3f/g' \
-        -e 's/@/%40/g' \
-        -e 's/\$/%24/g' \
-        -e 's/\&/%26/g' \
-        -e 's/\*/%2a/g' \
-        -e 's/\./%2e/g' \
-        -e 's/\//%2f/g' \
-        -e 's/\[/%5b/g' \
-        -e 's/\\/%5c/g' \
-        -e 's/\]/%5d/g' \
-        -e 's/\^/%5e/g' \
-        -e 's/_/%5f/g' \
-        -e 's/`/%60/g' \
-        -e 's/{/%7b/g' \
-        -e 's/|/%7c/g' \
-        -e 's/}/%7d/g' \
-        -e 's/~/%7e/g'
-}
+URIS=()
+LABELS=()
 
-
-echo ""
 URISFILE="data/uris.csv"
+COUNTER=1
+COUNTER_REQUESTS=0
 while IFS=',' read uri label ; do
 
     if [[ "$uri" == "s" ]];
     then
         continue
     fi
-
-    if [[ "$QUERY" == *"unknown-relations"* ]];
+    
+    COUNTER=$[$COUNTER + 1]
+    if (( $OFFSET > $COUNTER )); 
     then
-        label=$(echo $label | sed 's/"//g')
-        label=$(echo $label | sed 's/\r//g')
-        echo "$uri -- $label"
-        curl $AUTHMETHOD --user "$MLUSER:$MLPASS" -X POST \
-            --data-urlencode query@$QUERY \
-            --data-urlencode "database=$DB" \
-            --data-urlencode "bind:resource_uri=$uri" \
-            --data-urlencode "bind:resource_label@en=$label" \
-            -H "Content-type: application/x-www-form-urlencoded" \
-            -H "Accept: application/sparql-results+xml" \
-            http://$MLHOST:$MLPORT/v1/graphs/sparql
-
-    elif [[ "$QUERY" == *"known-relations"* || "$QUERY" == *"simple_select"* ]];
-    then
-        echo "$uri"
-        curl -s $AUTHMETHOD --user "$MLUSER:$MLPASS" -X POST \
-            --data-binary @$QUERY \
-            -H "Content-type: application/sparql-query" \
-            -H "Accept: application/sparql-results+xml" \
-            "http://$MLHOST:$MLPORT/v1/graphs/sparql?database=$DB&bind:resource_uri=$uri"
+        continue
     fi
-
-    COUNT=$(($COUNT + 1))
-    if [ "$COUNT" -gt "$REQUESTS" ]
+    
+    # Add URI to array
+    URIS+=( "$uri" )
+    
+    # Add label to array
+    label=$(echo $label | sed 's/"//g')
+    label=$(echo $label | sed 's/\r//g')
+    LABELS+=( "${label}" )
+    
+    COUNTER_REQUESTS=$[$COUNTER_REQUESTS + 1]
+    if (( $COUNTER_REQUESTS > $REQUESTS )); 
     then
         break
     fi
-    
 done < $URISFILE
+
+BATCH_SIZE=20
+BATCHES=$(( $REQUESTS / $BATCH_SIZE ))
+
+for ((batch=0;batch<=$BATCHES;batch++))
+do
+    
+    for ((request=0;request<=$BATCH_SIZE;request++))
+    do
+        uri="${URIS[$(( $batch * $BATCH_SIZE + $request ))]}"
+        label="${LABELS[$(( $batch * $BATCH_SIZE + $request ))]}"
+        
+        if [[ "$QUERY" == *"unknown-relations"* ]];
+        then
+            echo "$uri -- $label"
+            curl $AUTHMETHOD --user "$MLUSER:$MLPASS" -X POST \
+                --data-urlencode query@$QUERY \
+                --data-urlencode "database=$DB" \
+                --data-urlencode "bind:resource_uri=$uri" \
+                --data-urlencode "bind:resource_label@en=$label" \
+                -H "Content-type: application/x-www-form-urlencoded" \
+                -H "Accept: application/sparql-results+xml" \
+                http://$MLHOST:$MLPORT/v1/graphs/sparql &
+    
+        elif [[ "$QUERY" == *"known-relations"* || "$QUERY" == *"simple_select"* ]];
+        then
+            echo "$uri"
+            curl -s $AUTHMETHOD --user "$MLUSER:$MLPASS" -X POST \
+                --data-binary @$QUERY \
+                -H "Content-type: application/sparql-query" \
+                -H "Accept: application/sparql-results+xml" \
+                "http://$MLHOST:$MLPORT/v1/graphs/sparql?database=$DB&bind:resource_uri=$uri" &
+        fi
+    done
+    wait
+    
+done
