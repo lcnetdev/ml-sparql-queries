@@ -6,6 +6,7 @@ echo
 echo "Cleaning up downloaded source data."
 cd $DIR/data
 rm *ubjects*
+rm *names*
 rm exter*
 echo "Finished cleaning up downloaded source data."
 echo
