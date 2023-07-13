@@ -62,17 +62,18 @@ while IFS=',' read uri label ; do
     if [[ "$QUERY" == *"unknown-relations"* ]];
     then
         label=$(echo $label | sed 's/"//g')
+        label=$(echo $label | sed 's/\r//g')
         echo "$uri -- $label"
         curl $AUTHMETHOD --user "$MLUSER:$MLPASS" -X POST \
-            --data-urlencode query@queries/unknown-relations.sparql \
+            --data-urlencode query@$QUERY \
             --data-urlencode "database=$DB" \
             --data-urlencode "bind:resource_uri=$uri" \
-            --data-urlencode "bind:resource_label=$label" \
+            --data-urlencode "bind:resource_label@en=$label" \
             -H "Content-type: application/x-www-form-urlencoded" \
             -H "Accept: application/sparql-results+xml" \
             http://$MLHOST:$MLPORT/v1/graphs/sparql
 
-    elif [[ "$QUERY" == *"known-relations"* ]];
+    elif [[ "$QUERY" == *"known-relations"* || "$QUERY" == *"simple_select"* ]];
     then
         echo "$uri"
         curl -s $AUTHMETHOD --user "$MLUSER:$MLPASS" -X POST \
