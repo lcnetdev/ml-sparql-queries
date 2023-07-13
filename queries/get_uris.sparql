@@ -7,6 +7,9 @@ SELECT DISTINCT ?s ?l
 WHERE { 
     ?s madsrdf:authoritativeLabel ?l .
     ?s madsrdf:isMemberOfMADSScheme <http://id.loc.gov/authorities/subjects> .
+    ?s rdf:type ?type .
+    FILTER NOT EXISTS { ?s rdf:type madsrdf:Geographic } .
+    FILTER NOT EXISTS { ?s rdf:type madsrdf:HierarchicalGeographic } .
     FILTER ( isIRI(?s) ) .
 }
 LIMIT 10000
