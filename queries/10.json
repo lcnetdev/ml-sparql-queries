@@ -1,0 +1,14 @@
+{
+"columns": [{"name":"s"},{"name":"p"},{"name":"o"}],
+"rows":[
+{"s":{"type":"sem:iri","value":"http://id.loc.gov/authorities/childrensSubjects/sj00001253"},"p":{"type":"sem:iri","value":"http://www.loc.gov/mads/rdf/v1#authoritativeLabel"},"o":{"type":"rdf:langString","value":"Ceratopsians"}},
+{"s":{"type":"sem:iri","value":"http://id.loc.gov/authorities/childrensSubjects/sj00001255"},"p":{"type":"sem:iri","value":"http://www.loc.gov/mads/rdf/v1#authoritativeLabel"},"o":{"type":"rdf:langString","value":"Ukrainian language materials"}},
+{"s":{"type":"sem:iri","value":"http://id.loc.gov/authorities/childrensSubjects/sj00001256"},"p":{"type":"sem:iri","value":"http://www.loc.gov/mads/rdf/v1#authoritativeLabel"},"o":{"type":"rdf:langString","value":"Ukrainian language materials--Bilingual"}},
+{"s":{"type":"sem:iri","value":"http://id.loc.gov/authorities/childrensSubjects/sj00001257"},"p":{"type":"sem:iri","value":"http://www.loc.gov/mads/rdf/v1#authoritativeLabel"},"o":{"type":"rdf:langString","value":"Ukrainian language"}},
+{"s":{"type":"sem:iri","value":"http://id.loc.gov/authorities/childrensSubjects/sj00001258"},"p":{"type":"sem:iri","value":"http://www.loc.gov/mads/rdf/v1#authoritativeLabel"},"o":{"type":"rdf:langString","value":"Ukrainian language--Readers"}},
+{"s":{"type":"sem:iri","value":"http://id.loc.gov/authorities/childrensSubjects/sj00001264"},"p":{"type":"sem:iri","value":"http://www.loc.gov/mads/rdf/v1#authoritativeLabel"},"o":{"type":"rdf:langString","value":"Leonardo's horse (Milan, Italy)"}},
+{"s":{"type":"sem:iri","value":"http://id.loc.gov/authorities/childrensSubjects/sj00001268"},"p":{"type":"sem:iri","value":"http://www.loc.gov/mads/rdf/v1#authoritativeLabel"},"o":{"type":"rdf:langString","value":"Mallory, George, 1886-1924"}},
+{"s":{"type":"sem:iri","value":"http://id.loc.gov/authorities/childrensSubjects/sj00001269"},"p":{"type":"sem:iri","value":"http://www.loc.gov/mads/rdf/v1#authoritativeLabel"},"o":{"type":"rdf:langString","value":"Email"}},
+{"s":{"type":"sem:iri","value":"http://id.loc.gov/authorities/childrensSubjects/sj00001270"},"p":{"type":"sem:iri","value":"http://www.loc.gov/mads/rdf/v1#authoritativeLabel"},"o":{"type":"rdf:langString","value":"Stealing"}},
+{"s":{"type":"sem:iri","value":"http://id.loc.gov/authorities/childrensSubjects/sj00001275"},"p":{"type":"sem:iri","value":"http://www.loc.gov/mads/rdf/v1#authoritativeLabel"},"o":{"type":"rdf:langString","value":"Banded penguins"}}]
+}

@@ -23,6 +23,33 @@ then
         -H "Accept: application/rdf+xml" \
         -o $SAVEFILE \
         "http://$SOURCEDATA_HOST:$MLPORT/v1/graphs/sparql?database=$SOURCEDATA_DB&directory=$DBDIR"
+    elif [[ "$DATASET" == "works" ]];
+    then
+        SAVEFILE="data/$DATASET.json"
+        DBDIR="/resources/$DATASET/"
+        
+        SEARCH_QUERY="%3Cquery%20xmlns%3D%22http%3A%2F%2Fmarklogic.com%2Fappservices%2Fsearch%22%3E%3Cdirectory-query%3E%3Curi%3E$DBDIR%3C%2Furi%3E%3Cinfinite%3Efalse%3C%2Finfinite%3E%3C%2Fdirectory-query%3E%3C%2Fquery%3E"
+
+        echo $QUERY
+        echo "Fetching $DATASET"
+        echo $SAVEFILE
+        echo $DBDIR
+        echo $SOURCEDATA_HOST
+        echo $SOURCEDATA_DB
+        #curl $AUTHMETHOD --user "$MLUSER:$MLPASS" -X POST \
+        #--data-binary @queries/get_works_subjects.sparql \
+        #-H "Content-type: application/sparql-query" \
+        #-H "Accept: application/n-triples" \
+        #-o $SAVEFILE \
+        #"http://$SOURCEDATA_HOST:$MLPORT/v1/graphs/sparql?database=$SOURCEDATA_DB&structuredQuery=$SEARCH_QUERY"
+        
+        curl $AUTHMETHOD --user "$MLUSER:$MLPASS" -X POST \
+        --data-urlencode query@queries/get_works_subjects.sparql \
+        --data-urlencode structuredQuery@queries/structuredQuery.cts.xml \
+        -H "Content-type: application/x-www-form-urlencoded" \
+        -H "Accept: application/sparql-results+json" \
+        -o $SAVEFILE \
+        "http://$SOURCEDATA_HOST:$MLPORT/v1/graphs/sparql?dedup=off&database=$SOURCEDATA_DB"
     fi
 else
 

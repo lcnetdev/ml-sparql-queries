@@ -1,0 +1,15 @@
+{
+  "$optic": {
+    "ns": "op",
+    "fn": "operators",
+    "args": [
+      {
+        "ns": "op",
+        "fn": "from-sparql",
+        "args": [
+          "PREFIX madsrdf: <http://www.loc.gov/mads/rdf/v1#>\nSELECT ?s ?p ?o\nWHERE {\n  ?s madsrdf:isMemberOfMADSScheme $SCHEME .\n  ?s ?p ?o .\n} LIMIT 10"
+        ]
+      }
+    ]
+  }
+}
